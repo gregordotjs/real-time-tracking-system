@@ -21,7 +21,7 @@ const validateAccount = async (req, res, next) => {
     req.data = data;
     next();
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send(error.message);
   }
 };
 

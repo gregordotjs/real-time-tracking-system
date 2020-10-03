@@ -9,7 +9,7 @@ router.get("/events/:accountId", validateAccount, (req, res) => {
   // @ts-ignore
   const { account, data } = req;
   const event = new Events(account.accountId, Date.now(), data);
-  res.json({ event });
+  res.json({ ...event });
 });
 
 module.exports = router;
