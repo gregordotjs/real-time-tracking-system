@@ -1,0 +1,26 @@
+{
+  "name": "real-time-tracking-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gregordotjs/real-time-tracking-system.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gregordotjs/real-time-tracking-system/issues"
+  },
+  "homepage": "https://github.com/gregordotjs/real-time-tracking-system#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "faker": "^5.1.0"
+  }
+}
