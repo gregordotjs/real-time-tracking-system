@@ -7,7 +7,20 @@ chai.use(chaiHttp);
 const should = chai.should();
 const server = require("../server");
 
-describe("/GET accounts", () => {
+const { test } = require("../knexfile");
+const knex = require("knex")(test);
+
+describe("GET /accounts endpoint tests", () => {
+  before(async () => {
+    await knex.migrate.latest();
+    return knex.seed.run();
+  });
+
+  after(async () => {
+    await knex.migrate.rollback();
+    return await knex.destroy();
+  });
+
   it("it should GET all accounts", (done) => {
     chai
       .request(server)
@@ -15,13 +28,11 @@ describe("/GET accounts", () => {
       .end((err, res) => {
         res.should.have.status(200);
         res.body.should.be.a("array");
-        res.body.length.should.be.eql(5);
+        res.body.length.should.be.eql(10);
         done();
       });
   });
-});
 
-describe("/GET accounts/1", () => {
   it("it should GET account with id 1", (done) => {
     chai
       .request(server)
@@ -33,11 +44,9 @@ describe("/GET accounts/1", () => {
         done();
       });
   });
-});
 
-describe("/GET accounts/10", () => {
   it("it should return error (since user doesn't exist)", (done) => {
-    const accountId = 10;
+    const accountId = 15;
     chai
       .request(server)
       .get(`${API_PREFIX}/accounts/${accountId}`)

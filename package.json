@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha Backend/**/*.test.js",
-    "start": "npx nodemon Backend/server"
+    "start": "npx nodemon Backend/server",
+    "knex": "knex",
+    "create": "knex --knexfile Backend/knexfile.js migrate:latest",
+    "drop": "knex --knexfile Backend/knexfile.js migrate:rollback",
+    "seed": "knex --knexfile Backend/knexfile.js seed:run"
   },
   "repository": {
     "type": "git",
@@ -25,6 +29,8 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "express": "^4.17.1",
-    "faker": "^5.1.0"
+    "faker": "^5.1.0",
+    "knex": "^0.21.6",
+    "sqlite3": "^5.0.0"
   }
 }

@@ -1,6 +1,6 @@
 //@ts-check
 
-const { getById } = require("../db/mocks");
+const { getById } = require("../db/accounts");
 
 /**
  * @param {any} req

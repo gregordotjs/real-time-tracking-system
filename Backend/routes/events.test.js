@@ -7,12 +7,26 @@ chai.use(chaiHttp);
 const should = chai.should();
 const server = require("../server");
 
-describe("/GET events/2/?data=event-name", () => {
+const { test } = require("../knexfile");
+const knex = require("knex")(test);
+
+describe("GET /events endpoint tests", () => {
+  before(async () => {
+    await knex.migrate.latest();
+    return knex.seed.run();
+  });
+
+  after(async () => {
+    await knex.migrate.rollback();
+    return await knex.destroy();
+  });
+
   it("it should produce an event", (done) => {
     const data = "event-name";
+    const accountId = 1;
     chai
       .request(server)
-      .get(`${API_PREFIX}/events/2/?data=${data}`)
+      .get(`${API_PREFIX}/events/${accountId}/?data=${data}`)
       .end((err, res) => {
         res.should.have.status(200);
         res.body.should.be.a("object");
@@ -20,12 +34,10 @@ describe("/GET events/2/?data=event-name", () => {
         done();
       });
   });
-});
 
-describe("/GET events/1/?data=event-name", () => {
   it("it should return error (user is not active)", (done) => {
     const data = "event-name";
-    const accountId = 1;
+    const accountId = 2;
     chai
       .request(server)
       .get(`${API_PREFIX}/events/${accountId}/?data=${data}`)
@@ -35,12 +47,10 @@ describe("/GET events/1/?data=event-name", () => {
         done();
       });
   });
-});
 
-describe("/GET events/10/?data=event-name", () => {
   it("it should return error (user doesn't exist)", (done) => {
     const data = "event-name";
-    const accountId = 10;
+    const accountId = 15;
     chai
       .request(server)
       .get(`${API_PREFIX}/events/${accountId}/?data=${data}`)

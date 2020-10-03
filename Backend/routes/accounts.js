@@ -1,6 +1,6 @@
 //@ts-check
 const express = require("express");
-const { getAll, getById } = require("../db/mocks");
+const { getAll, getById } = require("../db/accounts");
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.get("/accounts/:accountId", async (req, res) => {
     const accounts = await getById(parseInt(accountId));
     res.json(accounts);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send(error.message);
   }
 });
 
