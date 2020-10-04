@@ -6,17 +6,17 @@ const cmdsState = require("../states/cmdsState");
 
 const accountsEndpoint = "http://localhost:3000/api/v1/accounts";
 
-const black = "\x1b[30m"
-const red = "\x1b[31m"
-const green = "\x1b[32m"
-const yellow = "\x1b[33m"
-const blue = "\x1b[34m"
-const cyan = "\x1b[36m"
+const black = "\x1b[30m";
+const red = "\x1b[31m";
+const green = "\x1b[32m";
+const yellow = "\x1b[33m";
+const blue = "\x1b[34m";
+const cyan = "\x1b[36m";
 const reset = "\x1b[0m";
 
 const colorize = (str, color = cyan) => `${color}${str}${reset}`;
 module.exports = {
-  ["help"]: () => {
+  ["help"]: async () => {
     console.log(`Type
   - '${colorize("filter")}' for filtering the events by account id
   - '${colorize(
@@ -29,12 +29,15 @@ module.exports = {
   - '${colorize(
     "summary --remove"
   )}' for removing the display of summarized reports
+  - '${colorize("exit")}' for closing the CLI
     `);
+    return true;
   },
   ["summary --remove"]: async () => {
     clearInterval(cmdsState.summary.intervalHandler);
     cmdsState.summary.summarize = false;
     console.log("Summarization of events is disabled.");
+    return true;
   },
   ["summary"]: async () => {
     const { summary } = cmdsState;
@@ -50,7 +53,14 @@ module.exports = {
     if (!isNaN(interval)) {
       console.log(`Done. Every ${interval} seconds you'll received a summary.`);
       if (cmdsState.filter) {
-        console.log(`${colorize('Warning', red)}: you're filtering the results by account id ${colorize(cmdsState.filter)}!`)
+        console.log(
+          `${colorize(
+            "Warning",
+            red
+          )}: you're filtering the results by account id ${colorize(
+            cmdsState.filter
+          )}!`
+        );
       }
       summary.summarize = true;
       summary.events = [];
@@ -64,6 +74,7 @@ module.exports = {
         summary.events = [];
       }, interval * 1000);
     }
+    return true;
   },
   ["filter --select"]: async () => {
     try {
@@ -88,6 +99,8 @@ module.exports = {
         );
     } catch (error) {
       console.log(error);
+    } finally {
+      return true;
     }
   },
   ["filter --remove"]: () => {
@@ -120,9 +133,11 @@ module.exports = {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      return true;
     }
   },
   ["exit"]: async () => {
-    process.exit(0);
+    return false;
   },
 };

@@ -60,7 +60,11 @@ const cli = async () => {
     ]);
     const command = input.cmd.trim();
     if (cmds[command]) {
-      await cmds[command]();
+      const keepAlive = await cmds[command]();
+      if (!keepAlive) {
+        io.disconnect();
+        process.exit(0);
+      }
     } else {
       console.log(
         `Unrecognized command ${command}. Type '\x1b[36mhelp\x1b[0m'`
