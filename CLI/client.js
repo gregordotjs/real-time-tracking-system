@@ -8,31 +8,67 @@ const io = client.connect("http://localhost:3001", {
   reconnectionDelayMax: 5000,
   reconnectionAttempts: 20,
 });
-
-let lastObtained;
-let connected = false;
+const inquirer = require("inquirer");
+const cmdsState = require("./states/cmdsState");
+const connState = require("./states/connectionState");
+const cmds = require("./utils/cmds");
 
 io.on("connect", (socket) => {
-  connected = true;
-  console.log(lastObtained);
-  if (lastObtained) {
-    io.emit("getBacklog", lastObtained);
+  if (connState.connected) {
+    io.emit("request-backlog", connState.lastObtained);
   }
-  console.log("connected");
-});
-
-io.on("event-triggered", (data) => {
-  const { timestamp } = JSON.parse(data);
-  if (connected) lastObtained = timestamp;
-  console.log(data);
+  connState.connected = true;
+  connState.lastObtained = null;
+  console.log("Connected.");
 });
 
 io.on("connect_error", () => {
-  connected = false;
-  console.log("no connection");
+  // @ts-ignore
+  if (!connState.lastObtained) connState.lastObtained = Date.now();
+  console.log("Attempting to reconnect...");
+});
+
+io.on("event", (data) => {
+  const { accountId } = JSON.parse(data);
+
+  if (cmdsState.filter === null || cmdsState.filter === parseInt(accountId)) {
+    if (!cmdsState.summary.summarize) {
+      console.log(data);
+    } else {
+      cmdsState.summary.events.push(data);
+    }
+  }
 });
 
 io.on("backlog", (data) => {
   console.log(data);
-  lastObtained = null;
+  connState.lastObtained = null;
 });
+
+process.on("uncaughtException", (err) => {
+  console.log(err);
+});
+
+// CLI interface
+const cli = async () => {
+  try {
+    const input = await inquirer.prompt([
+      {
+        name: "cmd",
+        message: "$",
+      },
+    ]);
+    const command = input.cmd.trim();
+    if (cmds[command]) {
+      await cmds[command]();
+    } else {
+      console.log(
+        `Unrecognized command ${command}. Type '\x1b[36mhelp\x1b[0m'`
+      );
+    }
+    cli();
+  } catch (error) {}
+};
+
+// run CLI
+cli();

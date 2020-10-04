@@ -19,7 +19,7 @@ router.get("/events/:accountId", validateAccount, (req, res) => {
 
   client.zadd("events", event.timestamp, JSON.stringify(event));
 
-  io.emit("event-triggered", JSON.stringify(event));
+  io.emit("event", JSON.stringify(event));
 
   res.json({ ...event });
 });

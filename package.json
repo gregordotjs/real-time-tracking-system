@@ -28,8 +28,10 @@
   "dependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "date-fns": "^2.16.1",
     "express": "^4.17.1",
     "faker": "^5.1.0",
+    "inquirer": "^7.3.3",
     "knex": "^0.21.6",
     "redis": "^3.0.2",
     "socket.io": "^2.3.0",

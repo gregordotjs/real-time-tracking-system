@@ -11,9 +11,11 @@ var redis = require("redis"),
 io.on("connection", function (socket) {
   console.log(`${socket.id} connected!`);
 
-  socket.on("getBacklog", (timestamp) => {
+  socket.on("request-backlog", (timestamp) => {
+    console.log(timestamp);
     if (timestamp) {
       const excludeLast = timestamp + 1;
+
       client.zrangebyscore("events", excludeLast, Date.now(), (err, reply) => {
         socket.emit("backlog", reply);
       });
