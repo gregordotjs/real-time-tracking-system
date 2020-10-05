@@ -1,4 +1,5 @@
 //@ts-check
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
@@ -11,8 +12,8 @@ const accounts = require("./routes/accounts");
 app.use(API_PREFIX, events);
 app.use(API_PREFIX, accounts);
 
-server.listen(3000, () =>
-  console.log(`Example app listening on port ${3000}!`)
+server.listen(process.env.SERVICE_PORT, () =>
+  console.log(`Example app listening on port ${process.env.SERVICE_PORT}!`)
 );
 
 module.exports = app;

@@ -1,30 +1,31 @@
 //@ts-check
-
-// Install redis on wins: https://github.com/microsoftarchive/redis/releases/tag/win-3.0.504
+require("dotenv").config();
 const client = require("socket.io-client");
-const io = client.connect("http://localhost:3001", {
-  reconnection: true,
-  reconnectionDelay: 1000,
-  reconnectionDelayMax: 5000,
-  reconnectionAttempts: 20,
-});
+const io = client.connect(
+  `${process.env.SOCKET_IO_URL}:${process.env.SOCKET_IO_PORT}`,
+  {
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    reconnectionAttempts: 20,
+  }
+);
 const inquirer = require("inquirer");
 const cmdsState = require("./states/cmdsState");
-const connState = require("./states/connectionState");
+//const connState = require("./states/connectionState");
+let lastObtained;
 const cmds = require("./utils/cmds");
 
-io.on("connect", (socket) => {
-  if (connState.connected) {
-    io.emit("request-backlog", connState.lastObtained);
-  }
-  connState.connected = true;
-  connState.lastObtained = null;
+io.on("reconnect", () => {
+  io.emit("request-backlog", lastObtained);
+});
+
+io.on("connect", () => {
   console.log("Connected.");
 });
 
-io.on("connect_error", () => {
-  // @ts-ignore
-  if (!connState.lastObtained) connState.lastObtained = Date.now();
+io.on("reconnect_attempt", () => {
+  if (!lastObtained) lastObtained = Date.now();
   console.log("Attempting to reconnect...");
 });
 
@@ -42,7 +43,7 @@ io.on("event", (data) => {
 
 io.on("backlog", (data) => {
   console.log(data);
-  connState.lastObtained = null;
+  lastObtained = null;
 });
 
 process.on("uncaughtException", (err) => {

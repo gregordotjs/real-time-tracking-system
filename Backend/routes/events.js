@@ -1,13 +1,14 @@
 //@ts-check
+require("dotenv").config();
 const express = require("express");
-
 const validateAccount = require("../middleware/validate-account");
 const Events = require("../models/Events");
 const router = express.Router();
-const io = require("socket.io-emitter")({ host: "127.0.0.1", port: 6379 });
-
-var redis = require("redis"),
-  client = redis.createClient();
+const emitter = require("socket.io-emitter")({
+  host: process.env.REDIS_URL,
+  port: parseInt(process.env.REDIS_PORT),
+});
+const client = require("redis").createClient();
 
 router.get("/events/:accountId", validateAccount, (req, res) => {
   // @ts-ignore
@@ -15,12 +16,10 @@ router.get("/events/:accountId", validateAccount, (req, res) => {
 
   const event = new Events(account.accountId, Date.now(), data);
 
-  //zadd table_name data timestamp_in_unix
-
+  // store event into redis
   client.zadd("events", event.timestamp, JSON.stringify(event));
-
-  io.emit("event", JSON.stringify(event));
-
+  // emit event, using socket.io-emitter
+  emitter.emit("event", JSON.stringify(event));
   res.json({ ...event });
 });
 

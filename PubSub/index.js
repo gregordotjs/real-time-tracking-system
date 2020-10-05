@@ -1,12 +1,15 @@
-// socket
-const { time } = require("faker");
+//@ts-check
+require("dotenv").config();
 const socket = require("socket.io");
 const io = socket();
 const redisAdapter = require("socket.io-redis");
-io.adapter(redisAdapter({ host: "localhost", port: 6379 }));
-
-var redis = require("redis"),
-  client = redis.createClient();
+io.adapter(
+  redisAdapter({
+    host: process.env.REDIS_URL,
+    port: parseInt(process.env.REDIS_PORT),
+  })
+);
+const client = require("redis").createClient();
 
 io.on("connection", function (socket) {
   console.log(`${socket.id} connected!`);
@@ -27,4 +30,6 @@ io.on("connection", function (socket) {
   });
 });
 
-io.listen(3001);
+io.listen(parseInt(process.env.SOCKET_IO_PORT));
+
+module.exports = io;

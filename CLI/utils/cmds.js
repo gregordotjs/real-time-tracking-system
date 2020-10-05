@@ -1,10 +1,10 @@
 // @ts-check
-
+require("dotenv").config();
 const inquirer = require("inquirer");
 const request = require("./request");
 const cmdsState = require("../states/cmdsState");
 
-const accountsEndpoint = "http://localhost:3000/api/v1/accounts";
+const accountsEndpoint = `${process.env.SERVICE_URL}:${process.env.SERVICE_PORT}/api/v1/accounts`;
 
 const black = "\x1b[30m";
 const red = "\x1b[31m";
