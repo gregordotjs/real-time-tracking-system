@@ -106,6 +106,7 @@ module.exports = {
   ["filter --remove"]: () => {
     cmdsState.filter = null;
     console.log("Filter is removed.");
+    return true;
   },
   ["filter"]: async () => {
     try {

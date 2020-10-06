@@ -7,6 +7,8 @@
     "test": "mocha Backend/**/*.test.js",
     "test-socket": "mocha PubSub/**/*.test.js",
     "start": "npx nodemon Backend/server",
+    "start-pubsub": "node PubSub",
+    "start-cli": "node CLI/client.js",
     "knex": "knex",
     "create": "knex --knexfile Backend/knexfile.js migrate:latest",
     "drop": "knex --knexfile Backend/knexfile.js migrate:rollback",

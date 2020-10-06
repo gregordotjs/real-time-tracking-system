@@ -12,9 +12,9 @@ const io = client.connect(
 );
 const inquirer = require("inquirer");
 const cmdsState = require("./states/cmdsState");
-//const connState = require("./states/connectionState");
-let lastObtained;
 const cmds = require("./utils/cmds");
+
+let lastObtained;
 
 io.on("reconnect", () => {
   io.emit("request-backlog", lastObtained);
