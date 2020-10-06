@@ -16,6 +16,13 @@ const cmds = require("./utils/cmds");
 
 let lastObtained;
 
+/*
+* Basic socket.io solution
+io.on("event-socket-io", (evnt) => {
+  console.log(evnt);
+});
+*/
+
 io.on("reconnect", () => {
   io.emit("request-backlog", lastObtained);
 });

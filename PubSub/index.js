@@ -11,7 +11,17 @@ io.adapter(
 );
 const client = require("redis").createClient();
 
+
+
 io.on("connection", function (socket) {
+
+  /*
+  * Basic socket.io solution
+  socket.on("event-socket-io", (evnt) => {
+    io.emit('event-socket-io', evnt);
+  });
+  */
+
   console.log(`${socket.id} connected!`);
 
   socket.on("request-backlog", (timestamp) => {
